@@ -35,6 +35,6 @@ MainWindow::MainWindow(QWidget* parent) {
   QAction* actionAbout = menuAbout->addAction("About");
   // show About When click "About"
   About* about = new About(menuAbout);
-  connect(actionAbout, &QAction::triggered, [=]() { about->show(); });
+  connect(actionAbout, &QAction::triggered, [=]() { about->exec(); });
 }
 MainWindow::~MainWindow() {}
