@@ -4,9 +4,9 @@
 
 #ifndef CUSTOMER_ASSISTANT_ABOUT_H
 #define CUSTOMER_ASSISTANT_ABOUT_H
-#include <QWidget>
+#include <QDialog>
 
-class About : public QWidget {
+class About : public QDialog {
   Q_OBJECT
  public:
   About(QWidget *parent = nullptr);
