@@ -16,60 +16,58 @@
 #include <QToolButton>
 #include "errorDialog.h"
 CouponList::CouponList(QWidget* parent) {
-  QWidget*     widgetCoupon1      = new QWidget(this);
-  QHBoxLayout* qhBoxLayoutCoupon1 = new QHBoxLayout(widgetCoupon1);
-  QToolButton* qToolButton1       = new QToolButton(widgetCoupon1);
-  QComboBox*   comboBox1          = new QComboBox(widgetCoupon1);
-  QLabel*      lblCoupon1_1       = new QLabel("label_1", widgetCoupon1);
-  QLineEdit*   lineEditCoupon1_1  = new QLineEdit(widgetCoupon1);
-  QLabel*      lblCoupon1_2       = new QLabel("label_2", widgetCoupon1);
-  QLineEdit*   lineEditCoupon1_2  = new QLineEdit(widgetCoupon1);
+  QWidget*     widgetCoupon      = new QWidget(this);
+  QHBoxLayout* qhBoxLayoutCoupon = new QHBoxLayout(widgetCoupon);
+  QToolButton* qToolButton       = new QToolButton(widgetCoupon);
+  QComboBox*   comboBox          = new QComboBox(widgetCoupon);
+  QLabel*      lblCoupon_1       = new QLabel("label_1", widgetCoupon);
+  QLineEdit*   lineEditCoupon_1  = new QLineEdit(widgetCoupon);
+  QLabel*      lblCoupon_2       = new QLabel("label_2", widgetCoupon);
+  QLineEdit*   lineEditCoupon_2  = new QLineEdit(widgetCoupon);
 
-  qToolButton1->setIcon(QPixmap(":/plus.png"));
+  qToolButton->setIcon(QPixmap(":/plus.png"));
 
-  comboBox1->addItem(nullptr);
-  comboBox1->addItem("店铺优惠券");
-  comboBox1->addItem("天猫品类券");
-  comboBox1->addItem("购物津贴");
-  comboBox1->addItem("预售付定金");
-  comboBox1->addItem("秒杀优惠券(不与店铺优惠券叠加)");
-  comboBox1->setSizeAdjustPolicy(QComboBox::AdjustToContents);
+  comboBox->addItem(nullptr);
+  comboBox->addItem("店铺优惠券");
+  comboBox->addItem("天猫品类券");
+  comboBox->addItem("购物津贴");
+  comboBox->addItem("预售付定金");
+  comboBox->addItem("秒杀优惠券(不与店铺优惠券叠加)");
+  comboBox->setSizeAdjustPolicy(QComboBox::AdjustToContents);
 
-  qhBoxLayoutCoupon1->addWidget(qToolButton1);
-  qhBoxLayoutCoupon1->addWidget(comboBox1);
-  qhBoxLayoutCoupon1->addWidget(lblCoupon1_1);
-  qhBoxLayoutCoupon1->addWidget(lineEditCoupon1_1);
-  qhBoxLayoutCoupon1->addWidget(lblCoupon1_2);
-  qhBoxLayoutCoupon1->addWidget(lineEditCoupon1_2);
+  qhBoxLayoutCoupon->addWidget(qToolButton);
+  qhBoxLayoutCoupon->addWidget(comboBox);
+  qhBoxLayoutCoupon->addWidget(lblCoupon_1);
+  qhBoxLayoutCoupon->addWidget(lineEditCoupon_1);
+  qhBoxLayoutCoupon->addWidget(lblCoupon_2);
+  qhBoxLayoutCoupon->addWidget(lineEditCoupon_2);
 
   // Check value
-  connect(qToolButton1, &QToolButton::clicked, [=]() {
-    if (comboBox1->currentText() == "" || lineEditCoupon1_1->text() == "" ||
-        lineEditCoupon1_2->text() == "") {
-      ErrorDialog* diaError = new ErrorDialog("Incomplete", qToolButton1);
+  connect(qToolButton, &QToolButton::clicked, [=]() {
+    if (comboBox->currentText() == "" || lineEditCoupon_1->text() == "" ||
+        lineEditCoupon_2->text() == "") {
+      ErrorDialog* diaError = new ErrorDialog("Incomplete", qToolButton);
       diaError->exec();
-    } else if ((lineEditCoupon1_1->text()).toInt() <
-               lineEditCoupon1_2->text().toInt()) {
+    } else if ((lineEditCoupon_1->text()).toInt() <
+               lineEditCoupon_2->text().toInt()) {
       ErrorDialog* diaError = new ErrorDialog(
           "The number in front is not greater than the number in the back",
-          qToolButton1);
+          qToolButton);
       diaError->exec();
     } else {
-      QLabel* lblCouponNum1 = new QLabel(qToolButton1);
-      QLabel* lblCouponNum2 = new QLabel(qToolButton1);
-      lblCouponNum1->setText(lineEditCoupon1_1->text());
-      lblCouponNum2->setText(lineEditCoupon1_2->text());
-      qhBoxLayoutCoupon1->replaceWidget(lineEditCoupon1_1, lblCouponNum1);
-      qhBoxLayoutCoupon1->replaceWidget(lineEditCoupon1_2, lblCouponNum2);
-      qhBoxLayoutCoupon1->removeWidget(qToolButton1);
-      qhBoxLayoutCoupon1->removeWidget(lineEditCoupon1_1);
-      qhBoxLayoutCoupon1->removeWidget(lineEditCoupon1_2);
-      delete lineEditCoupon1_1;
-      delete lineEditCoupon1_2;
+      QLabel* lblCouponNum1 = new QLabel(qToolButton);
+      QLabel* lblCouponNum2 = new QLabel(qToolButton);
+      lblCouponNum1->setText(lineEditCoupon_1->text());
+      lblCouponNum2->setText(lineEditCoupon_2->text());
+      qhBoxLayoutCoupon->replaceWidget(lineEditCoupon_1, lblCouponNum1);
+      qhBoxLayoutCoupon->replaceWidget(lineEditCoupon_2, lblCouponNum2);
+      qhBoxLayoutCoupon->removeWidget(qToolButton);
+      qhBoxLayoutCoupon->removeWidget(lineEditCoupon_1);
+      qhBoxLayoutCoupon->removeWidget(lineEditCoupon_2);
+      delete lineEditCoupon_1;
+      delete lineEditCoupon_2;
     }
   });
-
-
 }
 
 CouponList::~CouponList() {}
