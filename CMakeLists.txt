@@ -17,5 +17,7 @@ add_executable(
         src/preference.h
         src/about.cpp
         src/about.h
-)
+        src/errorDialog.cpp
+        src/errorDialog.h
+        src/couponList.cpp src/couponList.h)
 target_link_libraries(Customer_Assistant PRIVATE Qt5::Widgets)
