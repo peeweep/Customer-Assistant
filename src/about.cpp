@@ -49,18 +49,14 @@ About::About(QWidget *parent) {
   QWidget *    widget_OK  = new QWidget(this);
   QHBoxLayout *hLayout_OK = new QHBoxLayout(widget_OK);
 
-  QSpacerItem *horizontalSpacer_left =
-      new QSpacerItem(20, 20, QSizePolicy::Expanding);
+  QSpacerItem *qSpacerItem = new QSpacerItem(20, 20, QSizePolicy::Expanding);
 
   QPushButton *btnOK = new QPushButton("OK", parent = widget_OK);
   connect(btnOK, &QPushButton::clicked, [=]() { this->close(); });
 
-  QSpacerItem *horizontalSpacer_right =
-      new QSpacerItem(20, 20, QSizePolicy::Expanding);
-
-  hLayout_OK->addSpacerItem(horizontalSpacer_left);
+  hLayout_OK->addSpacerItem(qSpacerItem);
   hLayout_OK->addWidget(btnOK);
-  hLayout_OK->addSpacerItem(horizontalSpacer_right);
+  hLayout_OK->addSpacerItem(qSpacerItem);
 
   default_Layout->addWidget(tabWidget);
   default_Layout->addWidget(widget_OK);
