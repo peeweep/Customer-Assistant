@@ -8,7 +8,7 @@
 class CouponList : public QWidget {
   Q_OBJECT
  public:
-  CouponList(QWidget* parent = nullptr);
+  CouponList(QString label_1, QString label_2, QWidget* parent = nullptr);
   ~CouponList();
 };
 

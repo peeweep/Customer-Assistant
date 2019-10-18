@@ -15,14 +15,14 @@
 #include <QSpacerItem>
 #include <QToolButton>
 #include "errorDialog.h"
-CouponList::CouponList(QWidget* parent) {
+CouponList::CouponList(QString label_1, QString label_2, QWidget* parent) {
   QWidget*     widgetCoupon      = new QWidget(this);
   QHBoxLayout* qhBoxLayoutCoupon = new QHBoxLayout(widgetCoupon);
   QToolButton* qToolButton       = new QToolButton(widgetCoupon);
   QComboBox*   comboBox          = new QComboBox(widgetCoupon);
-  QLabel*      lblCoupon_1       = new QLabel("label_1", widgetCoupon);
+  QLabel*      lblCoupon_1       = new QLabel(label_1, widgetCoupon);
   QLineEdit*   lineEditCoupon_1  = new QLineEdit(widgetCoupon);
-  QLabel*      lblCoupon_2       = new QLabel("label_2", widgetCoupon);
+  QLabel*      lblCoupon_2       = new QLabel(label_2, widgetCoupon);
   QLineEdit*   lineEditCoupon_2  = new QLineEdit(widgetCoupon);
 
   qToolButton->setIcon(QPixmap(":/plus.png"));
