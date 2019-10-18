@@ -12,14 +12,9 @@
 #include <QTabWidget>
 About::About(QWidget *parent) {
   // Set title and icon
-  if (this->windowTitle().isEmpty()) {
-    QString title = "About";
-    this->setWindowTitle(title);
-  }
-  if (this->windowIcon().isNull()) {
-    this->setWindowIcon(QPixmap(":/logo.png"));
-  }
-  //  this->setFixedSize(500, 500);
+  QString title = "About";
+  this->setWindowTitle(title);
+  this->setWindowIcon(QPixmap(":/logo.png"));
   this->resize(570, 480);
 
   QVBoxLayout *default_Layout = new QVBoxLayout(this);
@@ -30,7 +25,6 @@ About::About(QWidget *parent) {
   QWidget *   tabAbout  = new QWidget(tabWidget);
   tabWidget->addTab(tabAbout, "About");
   tabAbout->setFixedWidth(this->width());
-  QFile   file("../LICENSE");
   QLabel *lblAbout = new QLabel(tabAbout);
   lblAbout->setText(
       "Customer Assistant @ MIT LICENSE\n"
