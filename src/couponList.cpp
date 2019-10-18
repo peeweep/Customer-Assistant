@@ -4,9 +4,6 @@
 
 #include "couponList.h"
 #include <QComboBox>
-#include <QDebug>
-#include <QDialog>
-#include <QDialogButtonBox>
 #include <QIcon>
 #include <QLabel>
 #include <QLayout>

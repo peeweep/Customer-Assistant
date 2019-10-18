@@ -3,17 +3,12 @@
 //
 #include "preference.h"
 #include <QComboBox>
-#include <QDebug>
-#include <QDialog>
 #include <QIcon>
-#include <QLabel>
 #include <QLayout>
 #include <QLineEdit>
 #include <QPushButton>
 #include <QSpacerItem>
-#include <QToolButton>
 #include "couponList.h"
-#include "errorDialog.h"
 Preference::Preference(QWidget* parent) {
   // Set title and icon
   QString title = "Edit Preference";
