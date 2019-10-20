@@ -63,6 +63,7 @@ CouponList::CouponList(QString label_1, QString label_2, QWidget* parent) {
       qhBoxLayoutCoupon->removeWidget(lineEditCoupon_2);
       delete lineEditCoupon_1;
       delete lineEditCoupon_2;
+      comboBox->setDisabled(true);
     }
   });
 }
