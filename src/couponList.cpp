@@ -40,7 +40,7 @@ CouponList::CouponList(QWidget* parent) {
   connect(qToolButton, &QToolButton::clicked, [=]() {
     if (comboBox->currentText() == "" || lineEditNumberFront->text() == "" ||
         lineEditNumberBehind->text() == "") {
-      QMessageBox::warning(this, "Incomplete", "Incomplete");
+      QMessageBox::warning(this, "Incomplete", "The number is incomplete");
     } else if ((lineEditNumberFront->text()).toInt() <
                lineEditNumberBehind->text().toInt()) {
       QMessageBox::warning(
