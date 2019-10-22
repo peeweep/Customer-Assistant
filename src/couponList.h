@@ -10,12 +10,6 @@ class CouponList : public QWidget {
  public:
   CouponList(QWidget* parent = nullptr);
   ~CouponList();
-//  int     id;
-//  QString idName;
-//  int     front;
-//  int     behind;
-//
-//  void clear();
 };
 
 #endif  // CUSTOMER_ASSISTANT_COUPONLIST_H
