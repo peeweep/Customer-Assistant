@@ -25,19 +25,21 @@ Preference::Preference(QWidget* parent) {
   QVBoxLayout* qvBoxLayoutCouponList = new QVBoxLayout(widgetCouponList);
 
   //  Coupon 1
-  CouponList* widgetCoupon1 = new CouponList("满", "减", widgetCouponList);
+  CouponList* widgetCoupon1 = new CouponList(widgetCouponList);
+//    connect(widgetCoupon1, SIGNAL(returnIndexString(QString text);),
+//            [=]() { qDebug() << "text"; });
 
   //  Coupon 2
-  CouponList* widgetCoupon2 = new CouponList("满", "减", widgetCouponList);
+  CouponList* widgetCoupon2 = new CouponList(widgetCouponList);
 
   //  Coupon 3
-  CouponList* widgetCoupon3 = new CouponList("每", "减", widgetCouponList);
+  CouponList* widgetCoupon3 = new CouponList(widgetCouponList);
 
   //  Coupon 4
-  CouponList* widgetCoupon4 = new CouponList("定金", "抵扣", widgetCouponList);
+  CouponList* widgetCoupon4 = new CouponList(widgetCouponList);
 
   //  Coupon 5
-  CouponList* widgetCoupon5 = new CouponList("满", "减", widgetCouponList);
+  CouponList* widgetCoupon5 = new CouponList(widgetCouponList);
 
   qvBoxLayoutCouponList->addWidget(widgetCoupon1);
   qvBoxLayoutCouponList->addWidget(widgetCoupon2);

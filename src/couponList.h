@@ -8,8 +8,14 @@
 class CouponList : public QWidget {
   Q_OBJECT
  public:
-  CouponList(QString label_1, QString label_2, QWidget* parent = nullptr);
+  CouponList(QWidget* parent = nullptr);
   ~CouponList();
+//  int     id;
+//  QString idName;
+//  int     front;
+//  int     behind;
+//
+//  void clear();
 };
 
 #endif  // CUSTOMER_ASSISTANT_COUPONLIST_H
