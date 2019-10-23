@@ -26,11 +26,13 @@ CouponList::CouponList(QWidget* parent) {
   QLineEdit*   lineEditNumberBehind = new QLineEdit(widgetCoupon);
   qToolButton->setIcon(QPixmap(":/plus.png"));
   comboBox->addItem(nullptr);
-  comboBox->addItem("店铺优惠券");
-  comboBox->addItem("天猫品类券");
-  comboBox->addItem("购物津贴");
-  comboBox->addItem("预售付定金");
-  comboBox->addItem("秒杀优惠券(不与店铺优惠券叠加)");
+  QFile* idFile = new QFile(QDir::currentPath() + "/id.tmp");
+  //  QFileInfo* idFileInfo = new QFileInfo(*idFile);
+
+  // Filter exist coupon name in id.tmp and get remaining name
+  QStringList nameList = getItemName(idFile);
+  comboBox->addItems(nameList);
+  //  ("","购物津贴", "预售付定金", "秒杀优惠券")
   comboBox->setSizeAdjustPolicy(QComboBox::AdjustToContents);
   qhBoxLayoutCoupon->addWidget(qToolButton);
   qhBoxLayoutCoupon->addWidget(comboBox);
@@ -76,7 +78,7 @@ CouponList::CouponList(QWidget* parent) {
 
       // write id/name/front/behind to ./${id}.json.tmp
 
-      QFile      tmpFile(QDir::homePath() + QString("/%1.json.tmp").arg(id));
+      QFile      tmpFile(QDir::currentPath() + QString("/%1.json.tmp").arg(id));
       QFileInfo* tmpFileInfo = new QFileInfo(tmpFile);
       if (tmpFile.open(QIODevice::ReadWrite | QIODevice::Truncate)) {
         tmpFile.write(jsonDocument->toJson());
@@ -88,17 +90,47 @@ CouponList::CouponList(QWidget* parent) {
       }
 
       // append id to id.tmp
-      QFile*     idFile     = new QFile(QDir::homePath() + "/id.tmp");
+      QFile*     idFile     = new QFile(QDir::currentPath() + "/id.tmp");
       QFileInfo* idFileInfo = new QFileInfo(*idFile);
       if (idFile->open(QIODevice::Append)) {
         QTextStream stream(idFile);
-        stream << id << "\n";
+        stream << idName << "\n";
         idFile->close();
-      } else {
-        // cant rw
-        qDebug() << QString("%1 File open error").arg(idFileInfo->fileName());
       }
     }
   });
 }
 CouponList::~CouponList() {}
+QStringList CouponList::getItemName(QFile* idFile) {
+  if (idFile->open(QIODevice::ReadOnly)) {
+    // read content from id.tmp, write to idFileNameList
+    QTextStream stream(idFile);
+    QString     idFileName     = stream.readAll();
+    QStringList idFileNameList = idFileName.split("\n");
+    // ("天猫品类券", "店铺优惠券", "")
+    idFileNameList.removeLast();
+    QVector<int> nameListFilter;
+    QStringList nameList = {"店铺优惠券", "天猫品类券", "购物津贴",
+                            "预售付定金", "秒杀优惠券"};
+
+    if (idFileNameList.count() < nameList.count()) {
+      for (int i = 0; i < nameList.count(); ++i) {
+        for (int j = 0; j < idFileNameList.count(); ++j) {
+          if (idFileNameList[j] == nameList[i]) {
+            nameListFilter.append(i);
+          }
+        }
+      }
+    }
+    //    QVector(0, 1)
+    for (int k = 0; k < nameListFilter.count(); ++k) {
+      nameList.replace(nameListFilter[k], "");
+    }
+    //    ("", "", "购物津贴", "预售付定金", "秒杀优惠券")
+    nameList.removeAll("");
+    //    ("购物津贴", "预售付定金", "秒杀优惠券")
+    return nameList;
+  } else {
+    exit(0);
+  }
+}
