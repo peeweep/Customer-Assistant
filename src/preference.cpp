@@ -28,8 +28,6 @@ Preference::Preference(QWidget* parent) {
 
   //  Coupon 1
   CouponList* widgetCoupon1 = new CouponList(widgetCouponList);
-//    connect(widgetCoupon1, SIGNAL(returnIndexString(QString text);),
-//            [=]() { qDebug() << "text"; });
 
   //  Coupon 2
   CouponList* widgetCoupon2 = new CouponList(widgetCouponList);
@@ -57,7 +55,7 @@ Preference::Preference(QWidget* parent) {
   QSpacerItem* qSpacerItemMid = new QSpacerItem(20, 20);
   QPushButton* btnCancel      = new QPushButton("Cancel", widgetAction);
   connect(btnSave, &QPushButton::clicked, [=]() {
-    //    cleanTmpFile();
+    cleanTmpFile();
     qDebug() << "Save";
   });
   connect(btnCancel, &QPushButton::clicked, [=]() { this->close(); });
@@ -98,6 +96,7 @@ void Preference::cleanTmpFile() {
   dir.setFilter(QDir::Files | QDir::NoSymLinks);
   dir.setNameFilters(filters);
   for (int i = 0; i < dir.entryList().count(); ++i) {
-    QFile::remove(dir.entryInfoList()[0].absoluteFilePath());
+    qDebug() << "remove " << dir.entryInfoList()[i].absoluteFilePath();
+    QFile::remove(dir.entryInfoList()[i].absoluteFilePath());
   }
 }
