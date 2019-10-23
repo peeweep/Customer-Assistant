@@ -102,7 +102,7 @@ CouponList::CouponList(QWidget* parent) {
 }
 CouponList::~CouponList() {}
 QStringList CouponList::getItemName(QFile* idFile) {
-  if (idFile->open(QIODevice::ReadOnly)) {
+  if (idFile->open(QIODevice::ReadWrite)) {
     // read content from id.tmp, write to idFileNameList
     QTextStream stream(idFile);
     QString     idFileName     = stream.readAll();
@@ -131,6 +131,10 @@ QStringList CouponList::getItemName(QFile* idFile) {
     //    ("购物津贴", "预售付定金", "秒杀优惠券")
     return nameList;
   } else {
+    QFileInfo* qFileInfo = new QFileInfo(*idFile);
+    QMessageBox::warning(
+        this, "error!",
+        QString("%1 File open error").arg(qFileInfo->absoluteFilePath()));
     exit(0);
   }
 }
