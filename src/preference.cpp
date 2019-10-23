@@ -3,6 +3,8 @@
 //
 #include "preference.h"
 #include <QComboBox>
+#include <QDebug>
+#include <QDir>
 #include <QIcon>
 #include <QLayout>
 #include <QLineEdit>
@@ -54,6 +56,10 @@ Preference::Preference(QWidget* parent) {
   QPushButton* btnSave        = new QPushButton("Save", widgetAction);
   QSpacerItem* qSpacerItemMid = new QSpacerItem(20, 20);
   QPushButton* btnCancel      = new QPushButton("Cancel", widgetAction);
+  connect(btnSave, &QPushButton::clicked, [=]() {
+    //    cleanTmpFile();
+    qDebug() << "Save";
+  });
   connect(btnCancel, &QPushButton::clicked, [=]() { this->close(); });
 
   qhBoxLayoutAction->addSpacerItem(qSpacerItem);
@@ -76,7 +82,6 @@ QComboBox* Preference::copyComboBoxItem(QComboBox* qComboBox) {
   }
   return comboBox;
 }
-
 int Preference::getLongestItem(QComboBox* qComboBox) {
   int max = 0;
   for (int i = 0; i < qComboBox->count(); ++i) {
@@ -85,4 +90,14 @@ int Preference::getLongestItem(QComboBox* qComboBox) {
               : max;
   }
   return max;
+}
+void Preference::cleanTmpFile() {
+  // remove *.tmp file
+  QDir        dir(QDir::currentPath());
+  QStringList filters("*.tmp");
+  dir.setFilter(QDir::Files | QDir::NoSymLinks);
+  dir.setNameFilters(filters);
+  for (int i = 0; i < dir.entryList().count(); ++i) {
+    QFile::remove(dir.entryInfoList()[0].absoluteFilePath());
+  }
 }

@@ -15,5 +15,7 @@ class Preference : public QWidget {
   static QComboBox *copyComboBoxItem(QComboBox *qComboBox);
   // get longest item
   int getLongestItem(QComboBox *qComboBox);
+  //  Clean *.tmp
+  void cleanTmpFile();
 };
 #endif  // CUSTOMER_ASSISTANT_PREFERENCE_H
