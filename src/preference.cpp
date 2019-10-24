@@ -77,22 +77,7 @@ Preference::Preference(QWidget* parent) {
 }
 
 Preference::~Preference() {}
-QComboBox* Preference::copyComboBoxItem(QComboBox* qComboBox) {
-  QComboBox* comboBox = new QComboBox(qComboBox->parentWidget());
-  for (int i = 0; i < qComboBox->count(); ++i) {
-    comboBox->addItem(qComboBox->itemText(i));
-  }
-  return comboBox;
-}
-int Preference::getLongestItem(QComboBox* qComboBox) {
-  int max = 0;
-  for (int i = 0; i < qComboBox->count(); ++i) {
-    max = qComboBox->itemText(i).length() > max
-              ? qComboBox->itemText(i).length()
-              : max;
-  }
-  return max;
-}
+
 void Preference::cleanTmpFile() {
   // remove *.tmp file
   QDir        dir(QDir::currentPath());
