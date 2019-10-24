@@ -45,6 +45,21 @@ Preference::Preference(QWidget* parent) {
   //  Coupon 5
   CouponList* widgetCoupon5 = new CouponList(widgetCouponList);
 
+  //  Coupon 6
+  CouponList* widgetCoupon6 = new CouponList(widgetCouponList);
+
+  //  Coupon 7
+  CouponList* widgetCoupon7 = new CouponList(widgetCouponList);
+
+  //  Coupon 8
+  CouponList* widgetCoupon8 = new CouponList(widgetCouponList);
+
+  //  Coupon 9
+  CouponList* widgetCoupon9 = new CouponList(widgetCouponList);
+
+  //  Coupon 10
+  CouponList* widgetCoupon10 = new CouponList(widgetCouponList);
+
   qvBoxLayoutCouponList->addWidget(widgetCoupon1);
   qvBoxLayoutCouponList->addWidget(widgetCoupon2);
   qvBoxLayoutCouponList->addWidget(widgetCoupon3);
@@ -73,7 +88,7 @@ Preference::Preference(QWidget* parent) {
   qvBoxLayoutDefault->addWidget(widgetCouponList);
   qvBoxLayoutDefault->addWidget(widgetAction);
   this->setLayout(qvBoxLayoutDefault);
-  this->show();
+  //  this->show();
 }
 
 Preference::~Preference() {}

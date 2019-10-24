@@ -7,7 +7,9 @@
 class MainWindow : public QMainWindow {
   Q_OBJECT
  public:
-  MainWindow(QWidget *parent = nullptr);
+  MainWindow(QWidget* parent = nullptr);
   ~MainWindow();
+  bool isDigitString(const QString& src);
 };
+
 #endif  // CUSTOMER_ASSISTANT_MAINWINDOW_H

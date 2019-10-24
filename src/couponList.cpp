@@ -44,12 +44,24 @@ CouponList::CouponList(QWidget* parent) {
     if (comboBox->currentText() == "" || lineEditNumberFront->text() == "" ||
         lineEditNumberBehind->text() == "") {
       QMessageBox::warning(this, "Incomplete", "The number is incomplete");
-    } else if ((lineEditNumberFront->text()).toInt() <
-               lineEditNumberBehind->text().toInt()) {
-      QMessageBox::warning(
-          this, "error!",
-          "The number in front is not greater than the number in the back");
     } else {
+      if (comboBox->currentText() != "定金膨胀") {
+        if (lineEditNumberFront->text().toInt() <
+            lineEditNumberBehind->text().toInt()) {
+          QMessageBox::warning(
+              this, "error!",
+              "The number in front is not greater than the number in the back");
+          return;
+        }
+      } else if (comboBox->currentText() == "定金膨胀") {
+        if (lineEditNumberFront->text().toInt() >
+            lineEditNumberBehind->text().toInt()) {
+          QMessageBox::warning(
+              this, "error!",
+              "The number in back is not greater than the number in the front");
+          return;
+        }
+      }
       QLabel* lblCouponNum1 = new QLabel(qToolButton);
       QLabel* lblCouponNum2 = new QLabel(qToolButton);
       lblCouponNum1->setText(lineEditNumberFront->text());
@@ -76,7 +88,10 @@ CouponList::CouponList(QWidget* parent) {
       QJsonDocument* jsonDocument = new QJsonDocument(qJsonArray);
       qDebug() << qJsonObject;
       // write id/name/front/behind to ./${time}.json.tmp
-      QFile      tmpFile(QDir::currentPath() + QString("/%1.json.tmp").arg(QDateTime::currentDateTime().toString("yyyyMMddhhmmss")));
+      QFile tmpFile(
+          QDir::currentPath() +
+          QString("/%1.json.tmp")
+              .arg(QDateTime::currentDateTime().toString("yyyyMMddhhmmss")));
       QFileInfo* tmpFileInfo = new QFileInfo(tmpFile);
       if (tmpFile.open(QIODevice::ReadWrite | QIODevice::Truncate)) {
         tmpFile.write(jsonDocument->toJson());
@@ -107,8 +122,8 @@ QStringList CouponList::getItemName(QFile* idFile) {
     // ("天猫品类券", "店铺优惠券", "")
     idFileNameList.removeLast();
     QVector<int> nameListFilter;
-    QStringList nameList = {"店铺优惠券", "天猫品类券", "购物津贴",
-                            "定金膨胀", "秒杀优惠券"};
+    QStringList  nameList = {"店铺优惠券", "天猫品类券", "购物津贴", "定金膨胀",
+                            "秒杀优惠券"};
 
     if (idFileNameList.count() < nameList.count()) {
       for (int i = 0; i < nameList.count(); ++i) {
