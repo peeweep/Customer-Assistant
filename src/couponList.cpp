@@ -3,6 +3,7 @@
 //
 #include "couponList.h"
 #include <QComboBox>
+#include <QDateTime>
 #include <QDebug>
 #include <QDir>
 #include <QFileInfo>
@@ -74,9 +75,8 @@ CouponList::CouponList(QWidget* parent) {
       qJsonArray.append(qJsonObject);
       QJsonDocument* jsonDocument = new QJsonDocument(qJsonArray);
       qDebug() << qJsonObject;
-      // write id/name/front/behind to ./${id}.json.tmp
-
-      QFile      tmpFile(QDir::currentPath() + QString("/%1.json.tmp").arg(id));
+      // write id/name/front/behind to ./${time}.json.tmp
+      QFile      tmpFile(QDir::currentPath() + QString("/%1.json.tmp").arg(QDateTime::currentDateTime().toString("yyyyMMddhhmmss")));
       QFileInfo* tmpFileInfo = new QFileInfo(tmpFile);
       if (tmpFile.open(QIODevice::ReadWrite | QIODevice::Truncate)) {
         tmpFile.write(jsonDocument->toJson());
@@ -88,7 +88,6 @@ CouponList::CouponList(QWidget* parent) {
       }
 
       // append id to id.tmp
-      QFile*     idFile     = new QFile(QDir::currentPath() + "/id.tmp");
       QFileInfo* idFileInfo = new QFileInfo(*idFile);
       if (idFile->open(QIODevice::Append)) {
         QTextStream stream(idFile);
@@ -109,7 +108,7 @@ QStringList CouponList::getItemName(QFile* idFile) {
     idFileNameList.removeLast();
     QVector<int> nameListFilter;
     QStringList nameList = {"店铺优惠券", "天猫品类券", "购物津贴",
-                            "预售付定金", "秒杀优惠券"};
+                            "定金膨胀", "秒杀优惠券"};
 
     if (idFileNameList.count() < nameList.count()) {
       for (int i = 0; i < nameList.count(); ++i) {
