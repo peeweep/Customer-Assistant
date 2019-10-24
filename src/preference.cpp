@@ -118,13 +118,18 @@ void Preference::mergeJson() {
   for (int i = 0; i < dir.entryList().count(); ++i) {
     qDebug() << "current: " << dir.entryInfoList()[i].absoluteFilePath();
     QFile* qFile = new QFile(dir.entryInfoList()[i].absoluteFilePath());
-    qFile->open(QIODevice::ReadOnly | QIODevice::Text);
-    QString       qString       = qFile->readAll();
-    QJsonDocument qJsonDocument = QJsonDocument::fromJson(qString.toUtf8());
-    QJsonObject   result        = qJsonDocument.array().at(0).toObject();
-    qDebug() << result;
-    qJsonArray.append(result);
-    qDebug() << qJsonArray;
+    if (qFile->open(QIODevice::ReadOnly | QIODevice::Text)) {
+      QString       qString       = qFile->readAll();
+      QJsonDocument qJsonDocument = QJsonDocument::fromJson(qString.toUtf8());
+      QJsonObject   result        = qJsonDocument.array().at(0).toObject();
+      qDebug() << "result: " << result;
+      qJsonArray.append(result);
+      qDebug() << "qJsonArray: " << qJsonArray;
+    } else {
+      QMessageBox::warning(this, "warning",
+                           QString("Does not have read permission for %1")
+                               .arg(dir.entryInfoList()[i].absoluteFilePath()));
+    }
     qFile->remove();
   }
 
@@ -138,11 +143,20 @@ void Preference::mergeJson() {
   qDebug() << jsonDocument;
   qDebug() << jsonDocument->toJson();
   if (jsonDocument->toJson() == "[\n]\n") {
-    QMessageBox::warning(this, "warning", "Does not have new config");
-    qDebug() << "Does not have new config";
+    QMessageBox::warning(this, "warning", "No new settings");
   } else {
-    QJsonObject result = jsonDocument->object();
-    qDebug() << result;
-    qDebug() << "Save";
+    //    QJsonObject result = jsonDocument->object();
+    //    qDebug() << result;
+    QString configFilePath = QDir::currentPath() + "/config.json";
+    QFile*  qFile          = new QFile(configFilePath);
+    if (qFile->open(QIODevice::WriteOnly)) {
+      qFile->write(jsonDocument->toJson());
+      qFile->close();
+      qDebug() << "Save";
+    } else {
+      QMessageBox::warning(
+          this, "warning",
+          QString("Does not have write permission for %1").arg(configFilePath));
+    }
   }
 }
