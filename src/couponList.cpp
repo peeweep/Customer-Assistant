@@ -2,6 +2,7 @@
 // Created by peeweep on 2019-10-18.
 //
 #include "couponList.h"
+#include <QApplication>
 #include <QComboBox>
 #include <QDateTime>
 #include <QDebug>
@@ -27,7 +28,7 @@ CouponList::CouponList(QWidget* parent) {
   QLineEdit*   lineEditNumberBehind = new QLineEdit(widgetCoupon);
   qToolButton->setIcon(QPixmap(":/plus.png"));
   comboBox->addItem(nullptr);
-  QFile* idFile = new QFile(QDir::currentPath() + "/id.tmp");
+  QFile* idFile = new QFile(QCoreApplication::applicationDirPath() + "/id.tmp");
   //  QFileInfo* idFileInfo = new QFileInfo(*idFile);
 
   // Filter exist coupon name in id.tmp and get remaining name
@@ -89,7 +90,7 @@ CouponList::CouponList(QWidget* parent) {
       qDebug() << qJsonObject;
       // write id/name/front/behind to ./${time}.json.tmp
       QFile tmpFile(
-          QDir::currentPath() +
+          QCoreApplication::applicationDirPath() +
           QString("/%1.json.tmp")
               .arg(QDateTime::currentDateTime().toString("yyyyMMddhhmmss")));
       QFileInfo* tmpFileInfo = new QFileInfo(tmpFile);

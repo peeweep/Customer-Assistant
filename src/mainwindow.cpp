@@ -2,6 +2,7 @@
 // Created by peeweep on 2019-10-15.
 //
 #include "mainwindow.h"
+#include <QCoreApplication>
 #include <QDebug>
 #include <QDir>
 #include <QHeaderView>
@@ -56,8 +57,8 @@ MainWindow::MainWindow(QWidget* parent) {
   QLabel*       qLabel        = new QLabel("label", centralWidget);
 
   // get ColumnCount
-  QString configFilePath = QDir::currentPath() + "/config.json";
-  QFile*  qFile          = new QFile(configFilePath);
+  QFile* qFile =
+      new QFile(QCoreApplication::applicationDirPath() + "/config.json");
   qFile->open(QIODevice::ReadOnly | QIODevice::Text);
   QString       qString       = qFile->readAll();
   QJsonDocument qJsonDocument = QJsonDocument::fromJson(qString.toUtf8());

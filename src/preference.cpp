@@ -10,6 +10,7 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QLayout>
+#include <QCoreApplication>
 #include <QLineEdit>
 #include <QMessageBox>
 #include <QPushButton>
@@ -95,7 +96,7 @@ Preference::~Preference() {}
 
 void Preference::cleanTmpFile() {
   // remove *.tmp file
-  QDir        dir(QDir::currentPath());
+  QDir        dir(QCoreApplication::applicationDirPath());
   QStringList filters("*.tmp");
   dir.setFilter(QDir::Files | QDir::NoSymLinks);
   dir.setNameFilters(filters);
@@ -108,7 +109,7 @@ void Preference::cleanTmpFile() {
 
 void Preference::mergeJson() {
   //   Filter *.json.tmp
-  QDir        dir(QDir::currentPath());
+  QDir        dir(QCoreApplication::applicationDirPath());
   QStringList filters("*.json.tmp");
   dir.setFilter(QDir::Files | QDir::NoSymLinks);
   dir.setNameFilters(filters);
@@ -134,7 +135,7 @@ void Preference::mergeJson() {
   }
 
   // delete id.tmp
-  QFile* qFile = new QFile(QDir::currentPath() + "/id.tmp");
+  QFile* qFile = new QFile(QCoreApplication::applicationDirPath() + "/id.tmp");
   qFile->remove();
 
   // Save json to config.json
@@ -147,7 +148,7 @@ void Preference::mergeJson() {
   } else {
     //    QJsonObject result = jsonDocument->object();
     //    qDebug() << result;
-    QString configFilePath = QDir::currentPath() + "/config.json";
+    QString configFilePath = QCoreApplication::applicationDirPath() + "/config.json";
     QFile*  qFile          = new QFile(configFilePath);
     if (qFile->open(QIODevice::WriteOnly)) {
       qFile->write(jsonDocument->toJson());
