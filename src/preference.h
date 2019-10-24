@@ -15,6 +15,8 @@ class Preference : public QWidget {
   static QComboBox *copyComboBoxItem(QComboBox *qComboBox);
   // get longest item
   int getLongestItem(QComboBox *qComboBox);
+  // move *.json.tmp to config.json and delete *.json.tmp
+  void mergeJson();
   //  Clean *.tmp
   void cleanTmpFile();
 };

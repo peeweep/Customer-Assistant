@@ -6,8 +6,12 @@
 #include <QDebug>
 #include <QDir>
 #include <QIcon>
+#include <QJsonArray>
+#include <QJsonDocument>
+#include <QJsonObject>
 #include <QLayout>
 #include <QLineEdit>
+#include <QMessageBox>
 #include <QPushButton>
 #include <QSpacerItem>
 #include "couponList.h"
@@ -55,8 +59,8 @@ Preference::Preference(QWidget* parent) {
   QSpacerItem* qSpacerItemMid = new QSpacerItem(20, 20);
   QPushButton* btnCancel      = new QPushButton("Cancel", widgetAction);
   connect(btnSave, &QPushButton::clicked, [=]() {
-    cleanTmpFile();
-    qDebug() << "Save";
+    mergeJson();
+    //    cleanTmpFile();
   });
   connect(btnCancel, &QPushButton::clicked, [=]() { this->close(); });
 
@@ -98,5 +102,47 @@ void Preference::cleanTmpFile() {
   for (int i = 0; i < dir.entryList().count(); ++i) {
     qDebug() << "remove " << dir.entryInfoList()[i].absoluteFilePath();
     QFile::remove(dir.entryInfoList()[i].absoluteFilePath());
+  }
+  qDebug() << "Clean";
+}
+
+void Preference::mergeJson() {
+  //   Filter *.json.tmp
+  QDir        dir(QDir::currentPath());
+  QStringList filters("*.json.tmp");
+  dir.setFilter(QDir::Files | QDir::NoSymLinks);
+  dir.setNameFilters(filters);
+  QJsonArray qJsonArray;
+
+  // get all content in *.json.tmp and delete it
+  for (int i = 0; i < dir.entryList().count(); ++i) {
+    qDebug() << "current: " << dir.entryInfoList()[i].absoluteFilePath();
+    QFile* qFile = new QFile(dir.entryInfoList()[i].absoluteFilePath());
+    qFile->open(QIODevice::ReadOnly | QIODevice::Text);
+    QString       qString       = qFile->readAll();
+    QJsonDocument qJsonDocument = QJsonDocument::fromJson(qString.toUtf8());
+    QJsonObject   result        = qJsonDocument.array().at(0).toObject();
+    qDebug() << result;
+    qJsonArray.append(result);
+    qDebug() << qJsonArray;
+    qFile->remove();
+  }
+
+  // delete id.tmp
+  QFile* qFile = new QFile(QDir::currentPath() + "/id.tmp");
+  qFile->remove();
+
+  // Save json to config.json
+  //   [{arg1:arg,arg2:arg},{arg1:arg,arg2:arg}]
+  QJsonDocument* jsonDocument = new QJsonDocument(qJsonArray);
+  qDebug() << jsonDocument;
+  qDebug() << jsonDocument->toJson();
+  if (jsonDocument->toJson() == "[\n]\n") {
+    QMessageBox::warning(this, "warning", "Does not have new config");
+    qDebug() << "Does not have new config";
+  } else {
+    QJsonObject result = jsonDocument->object();
+    qDebug() << result;
+    qDebug() << "Save";
   }
 }
