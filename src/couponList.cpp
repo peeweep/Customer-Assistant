@@ -70,12 +70,10 @@ CouponList::CouponList(QWidget* parent) {
                                   {"name", idName},
                                   {"front", QString::number(front)},
                                   {"behind", QString::number(behind)}}};
-      QJsonArray* jsonArray   = new QJsonArray();
       QJsonArray  qJsonArray;
       qJsonArray.append(qJsonObject);
       QJsonDocument* jsonDocument = new QJsonDocument(qJsonArray);
       qDebug() << qJsonObject;
-
       // write id/name/front/behind to ./${id}.json.tmp
 
       QFile      tmpFile(QDir::currentPath() + QString("/%1.json.tmp").arg(id));
