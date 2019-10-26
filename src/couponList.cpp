@@ -92,7 +92,7 @@ CouponList::CouponList(QWidget* parent) {
       QFile tmpFile(
           QCoreApplication::applicationDirPath() +
           QString("/%1.json.tmp")
-              .arg(QDateTime::currentDateTime().toString("yyyyMMddhhmmss")));
+              .arg(QDateTime::currentDateTime().toString("yyyyMMddhhmmsszzz")));
       QFileInfo* tmpFileInfo = new QFileInfo(tmpFile);
       if (tmpFile.open(QIODevice::ReadWrite | QIODevice::Truncate)) {
         tmpFile.write(jsonDocument->toJson());
