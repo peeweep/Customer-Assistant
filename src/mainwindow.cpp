@@ -98,14 +98,12 @@ MainWindow::MainWindow(QWidget* parent) {
       QVector<int> listResult(columnCount);
       for (int i = 0; i < columnCount; ++i) {
         QJsonObject result = qJsonDocument.array().at(i).toObject();
-        listFront[i]       = result.value("front").toInt();
-        listBehind[i]      = result.value("behind").toInt();
+        listFront[i]       = result.value("front").toString().toInt();
+        listBehind[i]      = result.value("behind").toString().toInt();
         if (result.value("name").toString() == "定金膨胀") {
-          listResult[i] =
-              result.value("behind").toInt() - result.value("front").toInt();
+          listResult[i] = listBehind[i] - listFront[i];
         } else {
-          listResult[i] =
-              result.value("front").toInt() - result.value("behind").toInt();
+          listResult[i] = listFront[i] - listBehind[i];
         }
       }
       for (int i = 0; i < columnCount; ++i) {
