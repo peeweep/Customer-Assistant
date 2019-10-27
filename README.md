@@ -6,5 +6,12 @@ A Tmall Customer Assistant
 
 ![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/peeweep/Customer-Assistant)
 ![GitHub top language](https://img.shields.io/github/languages/top/peeweep/Customer-Assistant)
-![Progress Bar](https://img.shields.io/badge/Progress-85%25-orange)
+![Progress Bar](https://img.shields.io/badge/Progress-92%25-orange)
 ![GitHub last commit](https://img.shields.io/github/last-commit/peeweep/Customer-Assistant)
+
+
+Preview
+
+![](images/EditPreference.png)
+![](images/MainWindowNoInput.png)
+![](images/MainWindow.png)
