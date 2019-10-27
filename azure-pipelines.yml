@@ -25,7 +25,7 @@ jobs:
       displayName: build
       inputs:
         workingDirectory: '$(Build.BinariesDirectory)/build'
-        cmakeArgs: --build $(Build.BinariesDirectory)/build --target bundle
+        cmakeArgs: --build $(Build.BinariesDirectory)/build --target Customer_Assistant
     - script: ls -l $(Build.BinariesDirectory)/build
 
 # - job: macOS
