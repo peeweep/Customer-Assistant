@@ -9,6 +9,7 @@ A Tmall Customer Assistant
 ![Progress Bar](https://img.shields.io/badge/Progress-92%25-orange)
 ![GitHub last commit](https://img.shields.io/github/last-commit/peeweep/Customer-Assistant)
 
+[![Build Status](https://dev.azure.com/eosiny/peeweep/_apis/build/status/peeweep.Customer-Assistant?branchName=master)](https://dev.azure.com/eosiny/peeweep/_build/latest?definitionId=1&branchName=master)
 
 Preview
 
