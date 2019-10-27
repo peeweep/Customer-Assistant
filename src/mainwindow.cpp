@@ -75,8 +75,8 @@ MainWindow::MainWindow(QWidget* parent) {
   qTableWidget->setHorizontalHeaderItem(5,
                                         new QTableWidgetItem(QString("红包")));
   qTableWidget->setItem(0, 5, new QTableWidgetItem(QString("0")));
-  qTableWidget->setHorizontalHeaderItem(6,
-                                        new QTableWidgetItem(QString("尾款")));
+  qTableWidget->setHorizontalHeaderItem(
+      6, new QTableWidgetItem(QString("到手价")));
   for (int i = 0; i < columnCount; ++i) {
     QJsonObject result = qJsonDocument.array().at(i).toObject();
 
