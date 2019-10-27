@@ -3,7 +3,7 @@ jobs:
   pool:
     vmImage: 'ubuntu-16.04'
   variables:
-    linuxdeployqtVersion: 6
+    linuxdeployqtVersion: continuous
   steps:
     - task: UsePythonVersion@0
       inputs:
@@ -28,35 +28,6 @@ jobs:
         cmakeArgs: --build $(Build.BinariesDirectory)/build --target Customer_Assistant
     - script: ls -l $(Build.BinariesDirectory)/build
 
-# - job: macOS
-#   pool:
-#     vmImage: 'macOS-10.13'
-#   steps:
-#     - task: UsePythonVersion@0
-#       inputs:
-#         versionSpec: '3.x'
-#     - script: |
-#         brew install p7zip
-#         pip install aqtinstall
-#         (cd /usr/local/opt; aqtinst 5.12.1 mac desktop clang_64)
-#       displayName: install qt
-#     - task: CMake@1
-#       displayName: configure
-#       inputs:
-#         workingDirectory: '$(Build.BinariesDirectory)/build'
-#         cmakeArgs: -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON -DQt5_DIR=/usr/local/opt/Qt5.12.1/5.12.1/clang_64/lib/cmake/Qt5/ $(Build.SourcesDirectory)
-#     - task: CMake@1
-#       displayName: build
-#       inputs:
-#         workingDirectory: '$(Build.BinariesDirectory)/build'
-#         cmakeArgs: --build $(Build.BinariesDirectory)/build
-#     - task: CMake@1
-#       displayName: build
-#       inputs:
-#         workingDirectory: '$(Build.BinariesDirectory)/build'
-#         cmakeArgs: --build $(Build.BinariesDirectory)/build --target bundle
-#     - script: ls -l $(Build.BinariesDirectory)/build
-
 # - job: Windows64
 #   pool:
 #     vmImage: 'vs2017-win2016'
@@ -69,23 +40,23 @@ jobs:
 #         cinst --no-progress -y 7zip
 #         pip install aqtinstall
 #         cd $(Build.BinariesDirectory)
-#         python -m aqt 5.12.4 windows desktop win64_msvc2017_64
+#         python -m aqt install 5.13.1 windows desktop win64_msvc2017_64
 #       displayName: install qt
 #     - task: CMake@1
 #       displayName: configure
 #       inputs:
 #         workingDirectory: $(Build.BinariesDirectory)
-#         cmakeArgs: -G "Visual Studio 15 2017 Win64" -DQt5_DIR=$(Build.BinariesDirectory)\Qt5.12.1\5.12.1\msvc2017_64\lib\cmake\Qt5 $(Build.SourcesDirectory)
+#         cmakeArgs: -G "Visual Studio 15 2017 Win64" -DQt5_DIR=$(Build.BinariesDirectory)\Qt5.13.1\5.13.1\msvc2017_64\lib\cmake\Qt5 $(Build.SourcesDirectory)
 #     - task: CMake@1
 #       displayName: build
 #       inputs:
 #         workingDirectory: $(Build.BinariesDirectory)
-#         cmakeArgs: --build . --config Release
+#         cmakeArgs: --build $(Build.BinariesDirectory)/build --config Release
 #     - task: CMake@1
 #       displayName: build package
 #       inputs:
 #         workingDirectory: $(Build.BinariesDirectory)
-#         cmakeArgs: --build . --target bundle --config Release
+#         cmakeArgs: --build . --target Customer_Assistant --config Release
 #     - script: |
 #         cat $(Build.BinariesDirectory)/_CPack_Packages/win64/NSIS/NSISOutput.log
 #         ls -l $(Build.BinariesDirectory)
