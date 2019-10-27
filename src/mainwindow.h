@@ -10,6 +10,7 @@ class MainWindow : public QMainWindow {
   MainWindow(QWidget* parent = nullptr);
   ~MainWindow();
   bool isDigitString(const QString& src);
+  QVector<QString> getMaxShopCoupon(QJsonDocument qJsonDocument, int intPrice);
 };
 
 #endif  // CUSTOMER_ASSISTANT_MAINWINDOW_H

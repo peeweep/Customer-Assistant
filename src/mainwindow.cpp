@@ -65,14 +65,18 @@ MainWindow::MainWindow(QWidget* parent) {
   int           columnCount   = qJsonDocument.array().count();
   qFile->close();
 
-  qTableWidget->setColumnCount(columnCount + 2);
-  qTableWidget->setRowCount(2);
-  QLineEdit         lineEdit;
-  QTableWidgetItem* qTableWidgetItem = new QTableWidgetItem(QString("0,1"));
+  qTableWidget->setColumnCount(columnCount + 3);
+  qTableWidget->setRowCount(1);
+  QLineEdit lineEdit;
 
   qTableWidget->verticalHeader()->hide();
-  qTableWidget->setHorizontalHeaderItem(0, new QTableWidgetItem(QString("")));
-  qTableWidget->setItem(0, 0, new QTableWidgetItem(QString("Price")));
+  qTableWidget->setHorizontalHeaderItem(0,
+                                        new QTableWidgetItem(QString("Price")));
+  qTableWidget->setHorizontalHeaderItem(5,
+                                        new QTableWidgetItem(QString("红包")));
+  qTableWidget->setItem(0, 5, new QTableWidgetItem(QString("0")));
+  qTableWidget->setHorizontalHeaderItem(6,
+                                        new QTableWidgetItem(QString("尾款")));
   for (int i = 0; i < columnCount; ++i) {
     QJsonObject result = qJsonDocument.array().at(i).toObject();
 
@@ -90,30 +94,58 @@ MainWindow::MainWindow(QWidget* parent) {
   connect(qTableWidget, &QTableWidget::itemChanged, [=]() {
     qTableWidget->blockSignals(true);
 
-    if (!isDigitString(qTableWidget->item(1, 0)->text())) {
+    if (!isDigitString(qTableWidget->item(0, 0)->text())) {
       QMessageBox::warning(qTableWidget, "warning", "It isn't a int!");
-    } else {
-      QVector<int> listFront(columnCount);
-      QVector<int> listBehind(columnCount);
-      QVector<int> listResult(columnCount);
-      for (int i = 0; i < columnCount; ++i) {
-        QJsonObject result = qJsonDocument.array().at(i).toObject();
-        listFront[i]       = result.value("front").toString().toInt();
-        listBehind[i]      = result.value("behind").toString().toInt();
-        if (result.value("name").toString() == "定金膨胀") {
-          listResult[i] = listBehind[i] - listFront[i];
-        } else {
-          listResult[i] = listFront[i] - listBehind[i];
-        }
-      }
-      for (int i = 0; i < columnCount; ++i) {
-        QTableWidgetItem* qTableWidgetItemNumber =
-            new QTableWidgetItem(QString::number(listResult[i]));
-        qTableWidgetItemNumber->setFlags(qTableWidgetItemNumber->flags() &
-                                         ~Qt::ItemIsEditable);
-        qTableWidget->setItem(1, i + 1, qTableWidgetItemNumber);
+      return;
+    }
+
+    // remove  "店铺优惠券" and "秒杀优惠券"
+    QVector<int> shopCouponColumn(qTableWidget->horizontalHeader()->count());
+    shopCouponColumn[0] = 0;
+    QVector<int> vectorBehind;
+    QVector<int> vectorFront;
+    int          sumOtherCoupon = 0;
+    int          price          = qTableWidget->item(0, 0)->text().toInt();
+    for (int i = 1; i < shopCouponColumn.size() - 2; ++i) {
+      QString headerItemName = qTableWidget->horizontalHeaderItem(i)->text();
+      if (headerItemName == "店铺优惠券" or headerItemName == "秒杀优惠券")
+        shopCouponColumn[i] = i;
+      else {
+        QJsonObject result      = qJsonDocument.array().at(i - 1).toObject();
+        int         valueFront  = result.value("front").toString().toInt();
+        int         valueBehind = result.value("behind").toString().toInt();
+        vectorFront.append(valueFront);
+        vectorBehind.append(valueBehind);
+        if (headerItemName == "购物津贴")
+          sumOtherCoupon += (price / valueFront) * valueBehind;
+        else if (headerItemName == "定金膨胀")
+          sumOtherCoupon += valueBehind;
       }
     }
+    shopCouponColumn.removeAll(0);
+    for (int i = 0; i < shopCouponColumn.size(); ++i) {
+      qTableWidget->removeColumn(shopCouponColumn[i] - i);
+    }
+    for (int j = 0; j < vectorBehind.count(); ++j) {
+      qTableWidget->setItem(
+          0, j + 1,
+          new QTableWidgetItem(QString::number(vectorFront[j]) + "-" +
+                               QString::number(vectorBehind[j])));
+    }
+    QVector<int>     listFront(columnCount);
+    QVector<int>     listBehind(columnCount);
+    QVector<QString> maxCoupon = getMaxShopCoupon(qJsonDocument, price);
+
+    qTableWidget->insertColumn(1);
+    qTableWidget->setHorizontalHeaderItem(1,
+                                          new QTableWidgetItem(maxCoupon[0]));
+    qTableWidget->setItem(
+        0, 1, new QTableWidgetItem(maxCoupon[1] + "-" + maxCoupon[2]));
+
+    int redPack = qTableWidget->item(0, 4)->text().toInt();
+    int endPay  = price - maxCoupon[2].toInt() - sumOtherCoupon - redPack;
+    qTableWidget->setItem(0, qTableWidget->columnCount() - 1,
+                          new QTableWidgetItem(QString::number(endPay)));
 
     qTableWidget->blockSignals(false);
   });
@@ -130,4 +162,43 @@ bool MainWindow::isDigitString(const QString& src) {
   const char* s = src.toUtf8().data();
   while (*s && *s >= '0' && *s <= '9') s++;
   return !bool(*s);
+}
+
+QVector<QString> MainWindow::getMaxShopCoupon(QJsonDocument qJsonDocument,
+                                              int           intPrice) {
+  int                       columnCount = qJsonDocument.array().count();
+  QVector<QVector<QString>> shopCoupons;
+  shopCoupons.resize(columnCount);
+  for (int i = 0; i < columnCount; i++) {
+    shopCoupons[i].resize(3);
+    QJsonObject result     = qJsonDocument.array().at(i).toObject();
+    QString     couponName = result.value("name").toString();
+    if (couponName == "店铺优惠券" or couponName == "秒杀优惠券") {
+      if (intPrice >= result.value("front").toString().toInt()) {
+        shopCoupons[i] = {couponName, result.value("front").toString(),
+                          result.value("behind").toString()};
+      }
+    }
+  }
+  //  remove QVector("", "", "")
+  shopCoupons.removeAll(QVector<QString>(3, ""));
+  //  qDebug() << shopCoupons;
+  //  QVector(
+  //    QVector("店铺优惠券", "2000", "100"),
+  //    QVector("秒杀优惠券", "3000", "300")
+  //    )
+
+  int              max = 0;
+  QVector<QString> maxCoupon(3);
+  for (int j = 0; j < shopCoupons.size(); ++j) {
+    if (shopCoupons[j][2].toInt() > max) {
+      max = shopCoupons[j][2].toInt();
+      for (int k = 0; k < 3; ++k) {
+        maxCoupon[k] = shopCoupons[j][k];
+      }
+    }
+  }
+
+  //  QVector("秒杀优惠券", "3000", "300")
+  return maxCoupon;
 }
