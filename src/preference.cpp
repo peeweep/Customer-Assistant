@@ -101,10 +101,8 @@ void Preference::cleanTmpFile() {
   dir.setFilter(QDir::Files | QDir::NoSymLinks);
   dir.setNameFilters(filters);
   for (int i = 0; i < dir.entryList().count(); ++i) {
-    qDebug() << "remove " << dir.entryInfoList()[i].absoluteFilePath();
     QFile::remove(dir.entryInfoList()[i].absoluteFilePath());
   }
-  qDebug() << "Clean";
 }
 
 void Preference::mergeJson() {
@@ -117,15 +115,12 @@ void Preference::mergeJson() {
 
   // get all content in *.json.tmp and delete it
   for (int i = 0; i < dir.entryList().count(); ++i) {
-    qDebug() << "current: " << dir.entryInfoList()[i].absoluteFilePath();
     QFile* qFile = new QFile(dir.entryInfoList()[i].absoluteFilePath());
     if (qFile->open(QIODevice::ReadOnly | QIODevice::Text)) {
       QString       qString       = qFile->readAll();
       QJsonDocument qJsonDocument = QJsonDocument::fromJson(qString.toUtf8());
       QJsonObject   result        = qJsonDocument.array().at(0).toObject();
-      qDebug() << "result: " << result;
       qJsonArray.append(result);
-      qDebug() << "qJsonArray: " << qJsonArray;
     } else {
       QMessageBox::warning(this, "warning",
                            QString("Does not have read permission for %1")
@@ -141,19 +136,14 @@ void Preference::mergeJson() {
   // Save json to config.json
   //   [{arg1:arg,arg2:arg},{arg1:arg,arg2:arg}]
   QJsonDocument* jsonDocument = new QJsonDocument(qJsonArray);
-  qDebug() << jsonDocument;
-  qDebug() << jsonDocument->toJson();
   if (jsonDocument->toJson() == "[\n]\n") {
     QMessageBox::warning(this, "warning", "No new settings");
   } else {
-    //    QJsonObject result = jsonDocument->object();
-    //    qDebug() << result;
     QString configFilePath = QCoreApplication::applicationDirPath() + "/config.json";
     QFile*  qFile          = new QFile(configFilePath);
     if (qFile->open(QIODevice::WriteOnly)) {
       qFile->write(jsonDocument->toJson());
       qFile->close();
-      qDebug() << "Save";
     } else {
       QMessageBox::warning(
           this, "warning",

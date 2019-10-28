@@ -87,7 +87,6 @@ CouponList::CouponList(QWidget* parent) {
       QJsonArray  qJsonArray;
       qJsonArray.append(qJsonObject);
       QJsonDocument* jsonDocument = new QJsonDocument(qJsonArray);
-      qDebug() << qJsonObject;
       // write id/name/front/behind to ./${time}.json.tmp
       QFile tmpFile(
           QCoreApplication::applicationDirPath() +
