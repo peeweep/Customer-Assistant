@@ -23,7 +23,7 @@ MainWindow::MainWindow(QWidget* parent) {
   QString title = "Customer Assistant";
   this->setWindowTitle(title);
   this->setWindowIcon(QPixmap(":/logo.png"));
-  this->resize(1000, 720);
+  this->resize(1400, 720);
 
   // enable MenuBar
   QMenuBar* qMenuBar = menuBar();
@@ -54,7 +54,7 @@ MainWindow::MainWindow(QWidget* parent) {
   QWidget*      centralWidget = new QWidget(this);
   QVBoxLayout*  qvBoxLayout   = new QVBoxLayout(centralWidget);
   QTableWidget* qTableWidget  = new QTableWidget(centralWidget);
-  QLabel*       qLabel        = new QLabel("label", centralWidget);
+  QLabel*       qLabel = new QLabel("peeweep at 0x0 dot ee", centralWidget);
 
   // get ColumnCount
   QFile* qFile =
@@ -62,69 +62,97 @@ MainWindow::MainWindow(QWidget* parent) {
   qFile->open(QIODevice::ReadOnly | QIODevice::Text);
   QString       qString       = qFile->readAll();
   QJsonDocument qJsonDocument = QJsonDocument::fromJson(qString.toUtf8());
-  int           columnCount   = qJsonDocument.array().count();
+  int           jsonCount     = qJsonDocument.array().count();
   qFile->close();
-
-  qTableWidget->setColumnCount(columnCount + 3);
+  // HorizontalHeader: 预售价格 couponNames 红包 尾款 到手价
+  qTableWidget->setColumnCount(jsonCount + 4);
   qTableWidget->setRowCount(1);
   QLineEdit lineEdit;
 
   qTableWidget->verticalHeader()->hide();
-  qTableWidget->setHorizontalHeaderItem(0,
-                                        new QTableWidgetItem(QString("Price")));
-  qTableWidget->setHorizontalHeaderItem(5,
-                                        new QTableWidgetItem(QString("红包")));
-  qTableWidget->setItem(0, 5, new QTableWidgetItem(QString("0")));
+  // Begin set HorizontalHeader
   qTableWidget->setHorizontalHeaderItem(
-      6, new QTableWidgetItem(QString("到手价")));
-  for (int i = 0; i < columnCount; ++i) {
-    QJsonObject result = qJsonDocument.array().at(i).toObject();
+      0, new QTableWidgetItem(QString("预售价格")));
+  int columnRedPack = jsonCount + 1;
+  qTableWidget->setHorizontalHeaderItem(columnRedPack,
+                                        new QTableWidgetItem(QString("红包")));
+  qTableWidget->setItem(0, columnRedPack, new QTableWidgetItem(QString("0")));
+  int columnEndPay = columnRedPack + 1;
+  qTableWidget->setHorizontalHeaderItem(columnEndPay,
+                                        new QTableWidgetItem(QString("尾款")));
+  int columnHandPrice = columnRedPack + 2;
+  qTableWidget->setHorizontalHeaderItem(
+      columnHandPrice, new QTableWidgetItem(QString("到手价")));
+  // Finish set HorizontalHeader
 
+  for (int i = 1; i <= jsonCount; ++i) {
+    QJsonObject result = qJsonDocument.array().at(i - 1).toObject();
+
+    // set HorizontalHeader
     QTableWidgetItem* qTableWidgetItemCouponName =
         new QTableWidgetItem(QString(result.value("name").toString()));
-    qTableWidget->setHorizontalHeaderItem(i + 1, qTableWidgetItemCouponName);
+    qTableWidget->setHorizontalHeaderItem(i, qTableWidgetItemCouponName);
+    // set Coupon value: Qstring(3000-300)
     QTableWidgetItem* qTableWidgetItemCoupon =
         new QTableWidgetItem(QString(result.value("front").toString() + "-" +
                                      result.value("behind").toString()));
     qTableWidgetItemCoupon->setFlags(qTableWidgetItemCoupon->flags() &
                                      ~Qt::ItemIsEditable);
-    qTableWidget->setItem(0, i + 1, qTableWidgetItemCoupon);
+    qTableWidget->setItem(0, i, qTableWidgetItemCoupon);
   }
 
   connect(qTableWidget, &QTableWidget::itemChanged, [=]() {
     qTableWidget->blockSignals(true);
-
-    if (!isDigitString(qTableWidget->item(0, 0)->text())) {
-      QMessageBox::warning(qTableWidget, "warning", "It isn't a int!");
+    // check (0,0) value
+    if (qTableWidget->item(0, 0) == 0x0) {
+      QMessageBox::warning(qTableWidget, "warning", "输入正确的预售价格!");
+      qTableWidget->blockSignals(false);
+      return;
+    } else if (!isDigitString(qTableWidget->item(0, 0)->text())) {
+      QMessageBox::warning(qTableWidget, "warning", "输入正确的预售价格!");
+      return;
+    } else if (qTableWidget->item(0, 0)->text().toInt() <
+               qTableWidget->item(0, columnRedPack)->text().toInt()) {
+      QMessageBox::warning(qTableWidget, "warning",
+                           "红包比商品额度还大，检查一下");
       return;
     }
 
-    // remove  "店铺优惠券" and "秒杀优惠券"
-    QVector<int> shopCouponColumn(qTableWidget->horizontalHeader()->count());
-    shopCouponColumn[0] = 0;
+    // behind numbers vector
     QVector<int> vectorBehind;
+    // front numbers vector
     QVector<int> vectorFront;
-    int          sumOtherCoupon = 0;
-    int          price          = qTableWidget->item(0, 0)->text().toInt();
-    for (int i = 1; i < shopCouponColumn.size() - 2; ++i) {
+    // All coupons except RedPack, Qvector{津贴,定金,定金膨胀后}
+    QVector<int> allCouponsExceptRedPack(3);
+    // get input price value
+    int price = qTableWidget->item(0, 0)->text().toInt();
+
+    // remove  "店铺优惠券" and "秒杀优惠券"
+    //   Search from index 1 to index column
+
+    QVector<int> columnShopCoupon(qTableWidget->columnCount() - 3);
+    //    columnShopCoupon[0] = 0;
+    for (int i = 1; i <= qTableWidget->columnCount() - 4; ++i) {
       QString headerItemName = qTableWidget->horizontalHeaderItem(i)->text();
       if (headerItemName == "店铺优惠券" or headerItemName == "秒杀优惠券")
-        shopCouponColumn[i] = i;
+        columnShopCoupon[i] = i;
       else {
         QJsonObject result      = qJsonDocument.array().at(i - 1).toObject();
         int         valueFront  = result.value("front").toString().toInt();
         int         valueBehind = result.value("behind").toString().toInt();
         vectorFront.append(valueFront);
         vectorBehind.append(valueBehind);
-        if (headerItemName == "购物津贴")
-          sumOtherCoupon += (price / valueFront) * valueBehind;
-        else if (headerItemName == "定金膨胀")
-          sumOtherCoupon += valueBehind;
+        if (headerItemName == "购物津贴") {
+          allCouponsExceptRedPack[0] = (price / valueFront) * valueBehind;
+        } else if (headerItemName == "定金膨胀") {
+          allCouponsExceptRedPack[1] = valueFront;
+          allCouponsExceptRedPack[2] = valueBehind;
+        }
       }
     }
-    shopCouponColumn.removeAll(0);
-    for (int i = 0; i < shopCouponColumn.size(); ++i) {
-      qTableWidget->removeColumn(shopCouponColumn[i] - i);
+    columnShopCoupon.removeAll(0);
+    for (int i = 0; i < columnShopCoupon.size(); ++i) {
+      qTableWidget->removeColumn(columnShopCoupon[i] - i);
     }
     for (int j = 0; j < vectorBehind.count(); ++j) {
       qTableWidget->setItem(
@@ -132,20 +160,35 @@ MainWindow::MainWindow(QWidget* parent) {
           new QTableWidgetItem(QString::number(vectorFront[j]) + "-" +
                                QString::number(vectorBehind[j])));
     }
-    QVector<int>     listFront(columnCount);
-    QVector<int>     listBehind(columnCount);
+    // get maxCoupon from all "店铺优惠券" and "秒杀优惠券"
+    // maxCoupon:  QVector("秒杀优惠券", "3000", "300")
     QVector<QString> maxCoupon = getMaxShopCoupon(qJsonDocument, price);
 
+    // begin setup shopCoupon On index 1
     qTableWidget->insertColumn(1);
     qTableWidget->setHorizontalHeaderItem(1,
                                           new QTableWidgetItem(maxCoupon[0]));
-    qTableWidget->setItem(
-        0, 1, new QTableWidgetItem(maxCoupon[1] + "-" + maxCoupon[2]));
+    QString shopCouponContent = maxCoupon[1] + "-" + maxCoupon[2];
+    qTableWidget->setItem(0, 1, new QTableWidgetItem(shopCouponContent));
+    // end setup shopCoupon
 
-    int redPack = qTableWidget->item(0, 4)->text().toInt();
-    int endPay  = price - maxCoupon[2].toInt() - sumOtherCoupon - redPack;
-    qTableWidget->setItem(0, qTableWidget->columnCount() - 1,
+    int columnCount   = qTableWidget->columnCount();
+    int columnRedPack = columnCount - 3;
+    int redPack       = qTableWidget->item(0, columnRedPack)->text().toInt();
+    // 付尾款 = 预售价格 - 优惠券 - 津贴 - 定金膨胀后
+    int endPay = price - maxCoupon[2].toInt() - allCouponsExceptRedPack[0] -
+                 allCouponsExceptRedPack[2];
+    int columnEndPay = columnCount - 2;
+    qTableWidget->setItem(0, columnEndPay,
                           new QTableWidgetItem(QString::number(endPay)));
+
+    // 到手价 = 预售价格 - 优惠券 - 津贴 - （定金膨胀后 - 定金) - 红包
+    int handPrice = price - maxCoupon[2].toInt() - allCouponsExceptRedPack[0] -
+                    (allCouponsExceptRedPack[2] - allCouponsExceptRedPack[1]) -
+                    redPack;
+    int columnHandPrice = columnCount - 1;
+    qTableWidget->setItem(0, columnHandPrice,
+                          new QTableWidgetItem(QString::number(handPrice)));
 
     qTableWidget->blockSignals(false);
   });
