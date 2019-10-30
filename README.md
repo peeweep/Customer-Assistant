@@ -6,7 +6,7 @@
 
 ### Known Issue
 
-- [ ] When the same coupon has multiple identical values, the table can not delete values properly
+- [ ] When the same coupon has multiple values, the table will not be updated correctly.
 
 ### How to use
 
