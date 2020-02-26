@@ -1,0 +1,16 @@
+name: build
+on: [push]
+jobs:
+  linux:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: depends
+      run: sudo apt install qtbase5-dev qt5-style-plugins
+    - name: build
+      run: cmake -Bbuild && make -C build
+    - uses: actions/upload-artifact@v1
+      with:
+        name: Customer_Assistant-linux-amd64
+        path: ./build/Customer_Assistant
+
